@@ -1,0 +1,12 @@
+{% extends "srs/layout.html" %}
+
+{% block body %}
+<div class="body-container">
+    <h1>Add Card</h1>
+    <form action="{% url 'add' %}" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Add" class="form-control">
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,21 @@
+.body-container {
+    margin: 0 20px 0 20px;
+}
+
+.sub-btn {
+    width: 100px;
+}
+
+.deck-link {
+    text-decoration: none;
+    font-size: large;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.card-front {
+    text-align: center;
+}

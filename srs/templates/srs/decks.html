@@ -1,0 +1,16 @@
+{% extends "srs/layout.html" %}
+
+{% block body %}
+    <div class="body-container">
+        <ul class="decks">
+            {% for deck in decks %}
+                <li><a href="{% url 'learn' deck_id=deck.id %}" class="deck-link">{{ deck.name }}</a></li>
+            {% endfor %}
+        </ul>
+        
+        <form action="{% url 'add_deck' %}">
+            <input type="submit" value="Add Deck" class="form-control sub-btn">
+        </form>
+    </div>
+    
+{% endblock %}

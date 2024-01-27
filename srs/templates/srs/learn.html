@@ -1,0 +1,21 @@
+{% extends "srs/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <div class="body-container">
+        <p class="front"></p>
+        <p class="back"></p>
+        <button id="show-answer" class="btn btn-primary">Show Answer</button>
+        <button id="next-card" class="btn btn-primary">Next</button>
+        <button id="fail-button" class="btn btn-primary">Fail</button>
+        <button id="partial-button" class="btn btn-primary">Partially recalled</button>
+        <button id="recalled-button" class="btn btn-primary">Recalled</button>
+
+    </div>
+
+    <div id="new-cards-var" data-new-cards="{{ new_cards }}"></div>
+    <div id="review-cards-var" data-review-cards="{{ review_cards }}"></div>
+    <div id="deck-var" data-deck="{{ deck }}"></div>
+    <script src="{% static 'srs/learn.js' %}"></script>
+{% endblock %}
+

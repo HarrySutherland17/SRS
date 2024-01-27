@@ -1,0 +1,17 @@
+{% extends "srs/layout.html" %}
+{% load static %}
+
+{% block body %}
+    
+    {% if user.is_authenticated %}
+    <p>{{ user }} is logged in</p>
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
+    {% else %}
+    <a href="{% url 'register' %}" class="link-opacity-100">Register</a>
+    <a href="{% url 'login' %}" class="link-opacity-100">Login</a>
+    <p>You are currently logged out</p>
+    {% endif %}
+{% endblock %}
