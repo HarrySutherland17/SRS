@@ -32,7 +32,6 @@ function load_new_cards(cards /*handleLearningComplete*/) {
     let last_card = null;
     let n_total = 0;
     let learning_complete = false;
-    let indexes = [];
     let cards_left = null;
 
 
@@ -68,23 +67,10 @@ function load_new_cards(cards /*handleLearningComplete*/) {
             cards_left = cards.length - (n_total / 2);
             console.log("cards_left: ", cards_left);
 
-            for (let i = 0; i <= cards.length - 1; i++) {
-                indexes.push(i);
-            }
 
             if (first_card === true) {
                 last_card = cards.length - 1;
             }
-            // for (let i = (cards.length - 1); i >= 0; i--) { // defines last card
-            //     if (cards[i].n !== 2) {
-            //         last_card = i;
-            //         console.log("Last card index: ", i);
-            //         break;
-            //     }
-            //     else {
-            //         continue;
-            //     }
-            // }
 
             if (cards_left == 1) {
                 is_last_card = true;
@@ -106,20 +92,7 @@ function load_new_cards(cards /*handleLearningComplete*/) {
                     is_last_card = false;
                 }
             }
-            // else if (cards[card_index].n === 2) {
-            //     console.log("Defining last card, n_total: ", n_total);
-            //     if (n_total == (2 * cards.length)) {
-            //         is_last_card = true;
-            //         learning_complete = true;
 
-            //     }
-            //     if ((card_index === last_card + 1)) {
-            //         is_last_card = true;
-            //     }
-            //     else {
-            //         is_last_card = false;
-            //     }
-            // }
             else {
                 is_last_card = false;
             }
@@ -157,8 +130,6 @@ function load_new_cards(cards /*handleLearningComplete*/) {
                         }
                     }
                 }
-                // n_total += 2;
-                // console.log("n_total: ", n_total)
 
             }
             else { // n != 2
