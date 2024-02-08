@@ -28,9 +28,12 @@ function load_new_cards(cards /*handleLearningComplete*/) {
     let recalled_button = document.querySelector('#recalled-button');
 
     let card_index = 0;
-    let last_card = false;
+    let is_last_card = false;
+    let last_card = null;
     let n_total = 0;
     let learning_complete = false;
+    let indexes = [];
+    let cards_left = null;
 
 
     console.log("Cards length: ", cards.length);
@@ -45,19 +48,92 @@ function load_new_cards(cards /*handleLearningComplete*/) {
             fail_button.style.display = 'none';
             partial_button.style.display = 'none';
             recalled_button.style.display = 'none';
-            console.log("Card index: ", card_index);
+
         }
 
+
         if (card_index < cards.length) {
-            if (card_index === cards.length - 1) {
-                last_card = true;
+            console.log("Card index: ", card_index);
+
+            if (cards[card_index].n === 2) { // calculates n_total
+                n_total += 2;
+                console.log("n_total: ", n_total)
+                if (n_total === (2 * cards.length)) {
+                    console.log("Learning complete");
+                    learning_complete = true;
+                    return;
+                }
             }
 
+            cards_left = cards.length - (n_total / 2);
+            console.log("cards_left: ", cards_left);
+
+            for (let i = 0; i <= cards.length - 1; i++) {
+                indexes.push(i);
+            }
+
+            if (first_card === true) {
+                last_card = cards.length - 1;
+            }
+            // for (let i = (cards.length - 1); i >= 0; i--) { // defines last card
+            //     if (cards[i].n !== 2) {
+            //         last_card = i;
+            //         console.log("Last card index: ", i);
+            //         break;
+            //     }
+            //     else {
+            //         continue;
+            //     }
+            // }
+
+            if (cards_left == 1) {
+                is_last_card = true;
+            }
+
+            else if (cards[card_index].n !== 2) { // checks if current card is last_card
+                if (card_index === last_card) {
+                    is_last_card = true;
+                }
+                else {
+                    is_last_card = false;
+                }
+            }
+            else if (cards[card_index].n === 2) {
+                if (card_index === last_card) {
+                    is_last_card = true;
+                }
+                else {
+                    is_last_card = false;
+                }
+            }
+            // else if (cards[card_index].n === 2) {
+            //     console.log("Defining last card, n_total: ", n_total);
+            //     if (n_total == (2 * cards.length)) {
+            //         is_last_card = true;
+            //         learning_complete = true;
+
+            //     }
+            //     if ((card_index === last_card + 1)) {
+            //         is_last_card = true;
+            //     }
+            //     else {
+            //         is_last_card = false;
+            //     }
+            // }
+            else {
+                is_last_card = false;
+            }
+            console.log("is_last_card:", is_last_card);
+
+
             if (cards[card_index].n === 2) {
+                console.log("Card index (n=2)", card_index)
                 console.log("Card is learnt");
-                if (last_card) { // last card and n = 2
-                    last_card = false;
-                    for (let i = 0; i < cards.length; i++) {
+
+                if (is_last_card) { // last card and n = 2
+
+                    console.log("Last card n=2 logic");
+                    for (let i = 0; i < cards.length; i++) { // finds first card
                         if ((cards[i].n !== 2) && i !== card_index) {
                             card_index = i;
                             console.log(i);
@@ -68,7 +144,9 @@ function load_new_cards(cards /*handleLearningComplete*/) {
                 }
                 else { // not last card and n = 2
                     card_index++
+                    console.log("Index incremented, not last card n = 2");
                     if (cards[card_index].n === 2) {
+                        console.log("n = 2 looking for next card");
                         for (let i = 0; i < cards.length; i++) {
 
                             if ((cards[i].n !== 2) && i !== card_index) {
@@ -79,12 +157,12 @@ function load_new_cards(cards /*handleLearningComplete*/) {
                         }
                     }
                 }
-                n_total += 2;
-                console.log("n_total: ", n_total)
+                // n_total += 2;
+                // console.log("n_total: ", n_total)
 
             }
             else { // n != 2
-                if (last_card) {
+                if (is_last_card) {
                     for (let i = 0; i < cards.length; i++) {
                         if ((cards[i].n !== 2) && i !== card_index) {
                             card_index = i;
@@ -106,8 +184,31 @@ function load_new_cards(cards /*handleLearningComplete*/) {
                 console.log("Learning complete");
                 learning_complete = true;
             }
-            else {
+            else if (cards[card_index].n !== 2) {
                 display();
+            }
+            else if (cards[card_index].n === 2) {
+                card_index++
+                if (cards[card_index].n === 2) {
+                    for (let i = 0; i < cards.length; i++) {
+                        if ((cards[i].n !== 2) && i !== card_index) {
+                            card_index = i;
+                            break;
+                        }
+                    }
+                }
+                display();
+            }
+
+            for (let i = (cards.length - 1); i >= 0; i--) { // defines last card
+                if (cards[i].n !== 2) {
+                    last_card = i;
+                    console.log("Last card index: ", i);
+                    break;
+                }
+                else {
+                    continue;
+                }
             }
         }
         else {
@@ -195,7 +296,7 @@ function load_new_cards(cards /*handleLearningComplete*/) {
 
             update_card(false);
             is_complete();
-            console.log("n_total", n_total);
+            // console.log("n_total", n_total);
 
         }
 
