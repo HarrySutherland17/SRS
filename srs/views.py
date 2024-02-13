@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import model_to_dict
+from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
 from django.contrib.auth.decorators import login_required
@@ -91,6 +92,30 @@ def learn(request, deck_id):
     
     return render(request, 'srs/learn.html', {
         'deck': deck,
+        'deck_id': deck_id,
         'new_cards': json.dumps(new_cards),
         'review_cards': json.dumps(review_cards),
     })
+
+def handle_learnt_cards(request, deck_id):
+    deck = get_object_or_404(Deck, pk=deck_id)
+    if request.method == 'POST':
+        cards_data = json.loads(request.body)
+        
+        for item in cards_data:
+            card_front = item.get('front')
+        
+            if card_front:
+                card = get_object_or_404(Card, front=card_front, deck=deck)
+                card.learnt = item.get('learnt')
+                card.i = item.get('i')
+                card.n = item.get('n')
+
+                card.save()
+            else:
+                return JsonResponse({"message": "Data failed to save"}, status=400)
+        return JsonResponse({"message": "Data successfully saved"})
+    
+            
+        
+        

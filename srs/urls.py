@@ -13,4 +13,5 @@ urlpatterns = [
     path('learn/<int:deck_id>/', views.learn, name='learn'),
     path('register/', views.register, name='register'),
     path('login/', views.login, name='login'),
+    path('learn/<int:deck_id>/handle_learnt_cards', views.handle_learnt_cards, name='handle_learnt_cards'),
 ]

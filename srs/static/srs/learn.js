@@ -1,8 +1,12 @@
 document.addEventListener("DOMContentLoaded", function () {
     let new_cards_data = document.getElementById('new-cards-var').dataset.newCards;
-    let review_cards_data = document.getElementById('review-cards-var').dataset.reviewCards
+    let review_cards_data = document.getElementById('review-cards-var').dataset.reviewCards;
+    let deck_id = document.getElementById('deck-id-var').dataset.deckId;
     let new_cards = JSON.parse(new_cards_data);
-    let review_cards = JSON.parse(review_cards_data)
+    let review_cards = JSON.parse(review_cards_data);
+
+    console.log(new_cards);
+    console.log("deck_id: ", deck_id);
 
     global_load(new_cards, review_cards)
 });
@@ -10,22 +14,16 @@ document.addEventListener("DOMContentLoaded", function () {
 function global_load(new_cards, review_cards) {
 
     load_new_cards(new_cards);
-
-
-
-
-
 }
 
-function load_new_cards(cards /*handleLearningComplete*/) {
-    // return new Promise((resolve) => {
-
+function load_new_cards(cards) {
 
     let show_button = document.querySelector('#show-answer');
     let next_card = document.querySelector('#next-card');
     let fail_button = document.querySelector('#fail-button');
     let partial_button = document.querySelector('#partial-button');
     let recalled_button = document.querySelector('#recalled-button');
+    let complete_button = document.querySelector('#complete-button');
 
     let card_index = 0;
     let is_last_card = false;
@@ -198,6 +196,9 @@ function load_new_cards(cards /*handleLearningComplete*/) {
             fail_button.style.display = 'none';
             partial_button.style.display = 'none';
             recalled_button.style.display = 'none';
+
+            send_learnt_cards(cards);
+
             return true
         }
         else {
@@ -267,26 +268,44 @@ function load_new_cards(cards /*handleLearningComplete*/) {
 
             update_card(false);
             is_complete();
-            // console.log("n_total", n_total);
 
         }
 
     })
+    complete_button.addEventListener('click', () => {
+        learning_complete = true;
+
+        for (let i = 0; i <= cards.length - 1; i++) {
+            cards[i].n = 2;
+            cards[i].i = 1;
+            cards[i].learnt = true;
+        }
+
+        is_complete();
+    })
 };
 
-
-function format(string) {
-    let remove = ['[', ']', ',', "'"];
-    let fstring = '';
-
-    for (let i = 0; i < string.length; i++) {
-        if (remove.includes(string[i])) {
-            fstring += '';
-        }
-        else {
-            fstring += string[i];
-        }
-    }
-
-    return fstring;
-};
+function send_learnt_cards(learnt_cards) {
+    let deck_id = document.getElementById('deck-id-var').dataset.deckId;
+    const csrftoken = document.cookie.match(/csrftoken=([^;]+)/)[1]; // takes the second index of array as it contains the string from the regex
+    console.log(csrftoken);
+    fetch(`/learn/${deck_id}/handle_learnt_cards`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken,
+        },
+        body: JSON.stringify(learnt_cards)
+    })
+        .then(response => {
+            if (response.ok) {
+                console.log("Data sent successfully");
+            }
+            else {
+                console.error("Data failed to send");
+            }
+        })
+        .catch(error => {
+            console.error('Error: ', error);
+        })
+}

@@ -10,12 +10,16 @@
         <button id="fail-button" class="btn btn-primary">Fail</button>
         <button id="partial-button" class="btn btn-primary">Partially recalled</button>
         <button id="recalled-button" class="btn btn-primary">Recalled</button>
-
+        
+        
+        <button id="complete-button" class="btn btn-primary">Complete</button>
     </div>
+
 
     <div id="new-cards-var" data-new-cards="{{ new_cards }}"></div>
     <div id="review-cards-var" data-review-cards="{{ review_cards }}"></div>
     <div id="deck-var" data-deck="{{ deck }}"></div>
+    <div id="deck-id-var" data-deck-id="{{ deck_id }}"></div>
     <script src="{% static 'srs/learn.js' %}"></script>
 {% endblock %}
 
