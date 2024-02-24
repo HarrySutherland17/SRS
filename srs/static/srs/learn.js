@@ -13,7 +13,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function global_load(new_cards, review_cards) {
 
-    load_new_cards(new_cards);
+    if (load_new_cards(new_cards)) {
+        load_review_cards(review_cards);
+    }
+}
+
+function load_review_cards(cards) {
+    console.log(cards);
 }
 
 function load_new_cards(cards) {
@@ -35,6 +41,18 @@ function load_new_cards(cards) {
 
     console.log("Cards length: ", cards.length);
 
+    if (cards.length === 0) {
+        show_button.style.display = 'none';
+        document.querySelector('.front').innerHTML = 'Learning stage finished';
+        document.querySelector('.back').innerHTML = '';
+        next_card.style.display = 'none';
+        fail_button.style.display = 'none';
+        partial_button.style.display = 'none';
+        recalled_button.style.display = 'none';
+
+        return true;
+    }
+
     function update_card(first_card) {
 
         function display() {
@@ -48,6 +66,9 @@ function load_new_cards(cards) {
 
         }
 
+        if (cards.length === 0) {
+            learning_complete = true;
+        }
 
         if (card_index < cards.length) {
             console.log("Card index: ", card_index);
@@ -206,6 +227,31 @@ function load_new_cards(cards) {
         }
     }
 
+    function send_learnt_cards(learnt_cards) {
+        let deck_id = document.getElementById('deck-id-var').dataset.deckId;
+        const csrftoken = document.cookie.match(/csrftoken=([^;]+)/)[1]; // takes the second index of array as it contains the string from the regex
+        console.log(csrftoken);
+        fetch(`/learn/${deck_id}/handle_learnt_cards`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+            },
+            body: JSON.stringify(learnt_cards)
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log("Data sent successfully");
+                }
+                else {
+                    console.error("Data failed to send");
+                }
+            })
+            .catch(error => {
+                console.error('Error: ', error);
+            })
+    }
+
     update_card(true); // show first card
 
     show_button.addEventListener('click', () => {
@@ -283,29 +329,9 @@ function load_new_cards(cards) {
 
         is_complete();
     })
+
+    if (is_complete()) {
+        return true;
+    }
 };
 
-function send_learnt_cards(learnt_cards) {
-    let deck_id = document.getElementById('deck-id-var').dataset.deckId;
-    const csrftoken = document.cookie.match(/csrftoken=([^;]+)/)[1]; // takes the second index of array as it contains the string from the regex
-    console.log(csrftoken);
-    fetch(`/learn/${deck_id}/handle_learnt_cards`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrftoken,
-        },
-        body: JSON.stringify(learnt_cards)
-    })
-        .then(response => {
-            if (response.ok) {
-                console.log("Data sent successfully");
-            }
-            else {
-                console.error("Data failed to send");
-            }
-        })
-        .catch(error => {
-            console.error('Error: ', error);
-        })
-}

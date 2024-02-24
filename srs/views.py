@@ -8,6 +8,7 @@ from django.contrib.auth.views import LogoutView
 from .models import Deck, Card, User
 from .forms import DeckForm, CardForm
 import json
+from datetime import date, timedelta
 
 
 def register(request):
@@ -81,14 +82,29 @@ def add(request):
         'form': form,
     })
     
-def learn(request, deck_id):
+def learn(request, deck_id): # deck_id comes from the url of the view
     deck = get_object_or_404(Deck, pk=deck_id)
+    cards = deck.cards.filter(learnt=True)
+
+    def calc_review_date(cards):
+        for card in cards:
+            c_date = card.review_date
+            interval_calc = card.constant_i*card.i
+            n_date = None
+            
+            n_date = c_date + timedelta(days=round(interval_calc))
+            card.review_date = n_date    
+        
+            
+            
+                        
+
+    
+    calc_review_date(cards)
     n_cards = deck.cards.filter(learnt=False)
-    r_cards = deck.cards.filter(learnt=True)
+    r_cards = deck.cards.filter(review_date=date.today().strftime('%Y-%m-%d')) # change to when i = appropiate date
     new_cards = [model_to_dict(i, fields=["front", "back", "n", "i", "learnt"]) for i in n_cards]
     review_cards = [model_to_dict(i, fields=["front", "back", "n", "i", "learnt"]) for i in r_cards]
-    
-    
     
     return render(request, 'srs/learn.html', {
         'deck': deck,
@@ -116,6 +132,4 @@ def handle_learnt_cards(request, deck_id):
                 return JsonResponse({"message": "Data failed to save"}, status=400)
         return JsonResponse({"message": "Data successfully saved"})
     
-            
-        
         
