@@ -86,25 +86,10 @@ def learn(request, deck_id): # deck_id comes from the url of the view
     deck = get_object_or_404(Deck, pk=deck_id)
     cards = deck.cards.filter(learnt=True)
 
-    def calc_review_date(cards):
-        for card in cards:
-            c_date = card.review_date
-            interval_calc = card.constant_i*card.i
-            n_date = None
-            
-            n_date = c_date + timedelta(days=round(interval_calc))
-            card.review_date = n_date    
-        
-            
-            
-                        
-
-    
-    calc_review_date(cards)
     n_cards = deck.cards.filter(learnt=False)
-    r_cards = deck.cards.filter(review_date=date.today().strftime('%Y-%m-%d')) # change to when i = appropiate date
+    r_cards = deck.cards.filter(review_date=date.today().strftime('%Y-%m-%d')) 
     new_cards = [model_to_dict(i, fields=["front", "back", "n", "i", "learnt"]) for i in n_cards]
-    review_cards = [model_to_dict(i, fields=["front", "back", "n", "i", "learnt"]) for i in r_cards]
+    review_cards = [model_to_dict(i, fields=["front", "back", "n", "i", "learnt", "review_n", "constant_i"]) for i in r_cards]
     
     return render(request, 'srs/learn.html', {
         'deck': deck,
@@ -126,10 +111,33 @@ def handle_learnt_cards(request, deck_id):
                 card.learnt = item.get('learnt')
                 card.i = item.get('i')
                 card.n = item.get('n')
-
+               
                 card.save()
             else:
                 return JsonResponse({"message": "Data failed to save"}, status=400)
         return JsonResponse({"message": "Data successfully saved"})
     
+def handle_reviewed_cards(request, deck_id):
+    deck = get_object_or_404(Deck, pk=deck_id)
+    if request.method == 'POST':
+        cards_data = json.loads(request.body)
         
+        for item in cards_data:
+            card_front = item.get('front')
+        
+            if card_front:
+                card = get_object_or_404(Card, front=card_front, deck=deck)
+                card.learnt = item.get('learnt')
+                card.i = item.get('i')
+                card.n = item.get('n')
+                card.constant_i = item.get('constant_i')
+                                
+                interval_calc = card.constant_i*card.i
+                card.i = round(interval_calc)
+                n_date = card.review_date + timedelta(days=round(card.i))
+                card.review_date = n_date
+
+                card.save()
+            else:
+                return JsonResponse({"message": "Data failed to save"}, status=400)
+        return JsonResponse({"message": "Data successfully saved"})

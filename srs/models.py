@@ -17,6 +17,7 @@ class Card(models.Model):
     n = models.IntegerField(max_length=200, default=0)
     i = models.FloatField(max_length=200, default=0)
     review_date = models.DateField(default=date.today())
+    review_n = models.IntegerField(max_length=200, default=0)
     constant_i = models.FloatField(default=2.5)
     learnt = models.BooleanField(default=False)
     

@@ -14,4 +14,5 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('login/', views.login, name='login'),
     path('learn/<int:deck_id>/handle_learnt_cards', views.handle_learnt_cards, name='handle_learnt_cards'),
+    path('learn/<int:deck_id>/handle_reviewed_cards', views.handle_reviewed_cards, name='handle_reviewed_cards')
 ]
