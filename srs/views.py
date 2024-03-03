@@ -134,6 +134,10 @@ def handle_reviewed_cards(request, deck_id):
                                 
                 interval_calc = card.constant_i*card.i
                 card.i = round(interval_calc)
+                
+                if card.n == 0:
+                    card.i = 1;
+                
                 n_date = card.review_date + timedelta(days=round(card.i))
                 card.review_date = n_date
 
